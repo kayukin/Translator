@@ -62,6 +62,8 @@ LRESULT CALLBACK Window::msgRouter(HWND hWnd, UINT message, WPARAM wParam, LPARA
 	if (message == WM_NCCREATE)
 	{
 		CREATESTRUCT * pcs = (CREATESTRUCT*)lParam;
+		Window* wnd = reinterpret_cast<Window*>(pcs->lpCreateParams);
+		wnd->m_hWnd = hWnd;
 		SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG)pcs->lpCreateParams);
 		return TRUE;
 	}
@@ -147,10 +149,13 @@ void Window::onCreate()
 {
 	HWND splash = CreateDialog(m_hInstance, MAKEINTRESOURCE(IDD_SPLASH), m_hWnd, NULL);
 
+	auto state = m_controller->getState();
+	std::wstring cur_lang = state.getFrom().getName() + L"->" + state.getTo().getName();
+
 	m_hListBox = CreateWindowEx(WS_EX_CLIENTEDGE, L"LISTBOX", L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL, 10, 40, 300, 150, m_hWnd, reinterpret_cast<HMENU>(IDC_LIST_BOX), m_hInstance, NULL);
 	m_hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 10, 10, 300, 20, m_hWnd, reinterpret_cast<HMENU>(IDC_EDIT), m_hInstance, NULL);
 	m_hEditResult = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 10, 250, 300, 20, m_hWnd, reinterpret_cast<HMENU>(IDC_EDIT_RESULT), m_hInstance, NULL);
-	m_hButtonChange = CreateWindowEx(NULL, L"BUTTON", L"STUB", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 10, 300, 140, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_CHANGE), m_hInstance, NULL);
+	m_hButtonChange = CreateWindowEx(NULL, L"BUTTON", cur_lang.c_str(), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 10, 300, 140, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_CHANGE), m_hInstance, NULL);
 	CreateWindowEx(NULL, L"BUTTON", L"Translate", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 160, 300, 100, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_TRANSLATE), m_hInstance, NULL);
 	CreateWindowEx(NULL, L"BUTTON", L"Search", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 90, 200, 150, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_SEARCH), m_hInstance, NULL);
 	SendMessage(m_hEditResult, EM_SETREADONLY, TRUE, NULL);

@@ -18,6 +18,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstanc
 	Dictionary::ITranslatorController* controller = new Dictionary::TranslatorController();
 	
 	Window window(hInstance, controller);
+	controller->setView(&window);
 	window.init(nCmdShow);
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_GUI));
