@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "resource.h"
-#include <Dictionary.h>
 #include <fstream>
+#include "../Translator/TranslatorAPI.h"
 
 #define MAX_LOADSTRING 100
 #define IDC_BUTTON_TRANSLATE 30000
@@ -43,7 +43,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	}
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_GUI));
-
+	
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
 		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
@@ -98,41 +98,42 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	return TRUE;
 }
 
+std::wstring getDirectionText(std::shared_ptr<Dictionary::ITranslatorController> controller)
+{
+	auto state = controller->getState();
+	return state.getFrom().getName() + L"->" + state.getTo().getName();
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static HWND hEdit, hEditResult, hButtonChange, hListBox;
 	int wmId, wmEvent;
 	PAINTSTRUCT ps;
 	HDC hdc;
-	static Dictionary::IDictionaryController* controller;
-	static std::shared_ptr<Dictionary::ISettings> settings;
+	static std::shared_ptr<Dictionary::ITranslatorController> controller;
+
+	
 
 	switch (message)
 	{
 	case WM_CREATE:
 	{
-		settings = Dictionary::SettingsFactory::create();
 		auto controller_switch_callback = [&]()
 		{
-			std::wstring cur_lang = controller->getDirectionText();
+			std::wstring cur_lang = getDirectionText(controller);
 			SendMessage(hButtonChange, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(cur_lang.c_str()));
 			SendMessage(hListBox, LB_RESETCONTENT, NULL, NULL);
 			SetWindowText(hEditResult, L""); 
 		};
 		HWND splash = CreateDialog(hInst, MAKEINTRESOURCE(IDD_SPLASH), hWnd, NULL);
-		Dictionary::DictionaryFactory factory;
-		std::wstring dict_filename = L"dictionary.dat";
-#ifdef _DEBUG
-		dict_filename = L"debugdict.dat";
-#endif
-		std::shared_ptr<Dictionary::IDictionary> dict = factory.create(dict_filename);
-		controller = new Dictionary::DictionaryController(dict, controller_switch_callback, settings->load());
 
+		controller = std::shared_ptr<Dictionary::ITranslatorController>(new Dictionary::TranslatorController(controller_switch_callback));
+	
 		hListBox = CreateWindowEx(WS_EX_CLIENTEDGE, L"LISTBOX", L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL, 10, 40, 300, 150, hWnd, reinterpret_cast<HMENU>(IDC_LIST_BOX), hInst, NULL);
 		hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 10, 10, 300, 20, hWnd, reinterpret_cast<HMENU>(IDC_EDIT), hInst, NULL);
 		defEditProc = (WNDPROC)SetWindowLongPtr(hEdit, GWLP_WNDPROC, (LONG_PTR)subEditProc);
 		hEditResult = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 10, 250, 300, 20, hWnd, reinterpret_cast<HMENU>(IDC_EDIT_RESULT), hInst, NULL);
-		hButtonChange = CreateWindowEx(NULL, L"BUTTON", controller->getDirectionText().c_str(), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 50, 300, 100, 24, hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_CHANGE), hInst, NULL);
+		hButtonChange = CreateWindowEx(NULL, L"BUTTON", getDirectionText(controller).c_str(), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 10, 300, 140, 24, hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_CHANGE), hInst, NULL);
 		CreateWindowEx(NULL, L"BUTTON", LoadFromRes(IDS_TRANSLATE_BUTTON).c_str(), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 160, 300, 100, 24, hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_TRANSLATE), hInst, NULL);
 		CreateWindowEx(NULL, L"BUTTON", LoadFromRes(IDS_SEARCH_BUTTON).c_str(), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 90, 200, 150, 24, hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_SEARCH), hInst, NULL);
 		SendMessage(hEditResult, EM_SETREADONLY, TRUE, NULL);
@@ -154,8 +155,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				SendMessage(hListBox, LB_GETTEXT, static_cast<WPARAM>(selected_index), reinterpret_cast<LPARAM>(buf));
 				std::wstring selected_word(buf);
 				delete[] buf;
-				std::wstring translation = controller->getDictionary()->translate(selected_word, controller->getDirection());
-				SetWindowText(hEditResult, translation.c_str());
+				auto translations = controller->translate(selected_word);
+				std::wstring str;
+				for (auto translation : translations)
+				{
+					str += translation + L", ";
+				}
+				str.pop_back();
+				str.pop_back();
+				SetWindowText(hEditResult, str.c_str());
 			}
 			break;
 		}
@@ -166,8 +174,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			GetWindowText(hEdit, buf, edit_length + 1);
 			std::wstring edit_text(buf);
 			delete[] buf;
-			controller->detectDirection(edit_text);
-			auto words = controller->getDictionary()->find(edit_text, 2, controller->getDirection());
+			
+			auto words = controller->find(edit_text, 2);
 			SendMessage(hListBox, LB_RESETCONTENT, NULL, NULL);
 			for (auto word : words)
 			{
@@ -177,9 +185,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		case IDC_BUTTON_CHANGE:
 		{
-			controller->switchDirection();
+			controller->switchState();
 			break;
 		}
+		case ID_FILE_SETTINGS:
+			DialogBox(hInst, MAKEINTRESOURCE(IDD_PROP), hWnd, NULL);
+			break;
 		case IDM_ABOUT:
 			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 			break;
@@ -199,8 +210,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		SendMessage(hListBox, message, wParam, lParam);
 		break;
 	case WM_DESTROY:
-		settings->save(controller->getDirection());
-		delete controller;
+		//settings->save(controller->getDirection());
+		//delete controller;
 		PostQuitMessage(0);
 		break;
 	default:

@@ -5,10 +5,10 @@ VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GUI", "GUI\GUI.vcxproj", "{836DDBA4-3158-4184-8F38-1DE9A95A5E79}"
 	ProjectSection(ProjectDependencies) = postProject
-		{8E81F1AC-32CA-4648-B128-29DE940E3021} = {8E81F1AC-32CA-4648-B128-29DE940E3021}
+		{2A9EDC9D-09BB-4956-91C9-7A8317B15821} = {2A9EDC9D-09BB-4956-91C9-7A8317B15821}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Dictionary", "Dictionary\Dictionary.vcxproj", "{8E81F1AC-32CA-4648-B128-29DE940E3021}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Translator", "Translator\Translator.vcxproj", "{2A9EDC9D-09BB-4956-91C9-7A8317B15821}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,10 +20,10 @@ Global
 		{836DDBA4-3158-4184-8F38-1DE9A95A5E79}.Debug|Win32.Build.0 = Debug|Win32
 		{836DDBA4-3158-4184-8F38-1DE9A95A5E79}.Release|Win32.ActiveCfg = Release|Win32
 		{836DDBA4-3158-4184-8F38-1DE9A95A5E79}.Release|Win32.Build.0 = Release|Win32
-		{8E81F1AC-32CA-4648-B128-29DE940E3021}.Debug|Win32.ActiveCfg = Debug|Win32
-		{8E81F1AC-32CA-4648-B128-29DE940E3021}.Debug|Win32.Build.0 = Debug|Win32
-		{8E81F1AC-32CA-4648-B128-29DE940E3021}.Release|Win32.ActiveCfg = Release|Win32
-		{8E81F1AC-32CA-4648-B128-29DE940E3021}.Release|Win32.Build.0 = Release|Win32
+		{2A9EDC9D-09BB-4956-91C9-7A8317B15821}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2A9EDC9D-09BB-4956-91C9-7A8317B15821}.Debug|Win32.Build.0 = Debug|Win32
+		{2A9EDC9D-09BB-4956-91C9-7A8317B15821}.Release|Win32.ActiveCfg = Release|Win32
+		{2A9EDC9D-09BB-4956-91C9-7A8317B15821}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

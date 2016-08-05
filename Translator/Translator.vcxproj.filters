@@ -24,37 +24,49 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dllspec.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DictionaryController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DictionaryFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IDictionary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IDictionaryController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RuEngDictionary.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="string_utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ISettings.h">
+    <ClInclude Include="ITranslator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RegistrySettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SettingsFactory.h">
+    <ClInclude Include="Translator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TranslatorAPI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Language.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TranslatorFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Dictionary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ILanguageDetector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RegexpLanguageDetector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Locator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TranslationState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TranslatorController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ITranslatorController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -62,19 +74,19 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dllmain.cpp">
+    <ClCompile Include="Translator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DictionaryController.cpp">
+    <ClCompile Include="TranslatorFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DictionaryFactory.cpp">
+    <ClCompile Include="Dictionary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RuEngDictionary.cpp">
+    <ClCompile Include="TranslatorController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="string_utils.cpp">
+    <ClCompile Include="Language.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
