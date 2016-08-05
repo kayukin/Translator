@@ -3,7 +3,7 @@
 
 namespace Dictionary
 {
-	TranslatorController::TranslatorController(ViewCallback callback) :m_state_changed_callback(callback)
+	TranslatorController::TranslatorController()
 	{
 		Settings settings = m_settings_loader->load();
 		m_dict_filename = settings.dict_filename;
@@ -27,7 +27,7 @@ namespace Dictionary
 
 	void TranslatorController::onStateChange()
 	{
-		m_state_changed_callback();
+		m_view->onSwitchState();
 	}
 
 	std::vector<std::wstring> TranslatorController::translate(std::wstring word)
@@ -48,5 +48,10 @@ namespace Dictionary
 	void TranslatorController::switchState()
 	{
 		m_translator->switchState();
+	}
+
+	void TranslatorController::setView(IView* view)
+	{
+		m_view = view;
 	}
 }

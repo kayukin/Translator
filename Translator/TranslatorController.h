@@ -7,16 +7,15 @@
 
 namespace Dictionary
 {
-	typedef std::function<void(void)> ViewCallback;
 	class TranslatorController : public ITranslatorController
 	{
 		std::shared_ptr<ITranslator> m_translator;
 		std::shared_ptr<ISettingsLoader> m_settings_loader = Locator::Instance().getSettingsLoader();
 		std::wstring m_dict_filename;
-		ViewCallback m_state_changed_callback;
+		IView* m_view;
 		void TranslatorController::createTranslator();
 	public:
-		TranslatorController(ViewCallback state_changed);
+		TranslatorController();
 		~TranslatorController();
 		void onStateChange() override;
 
@@ -24,5 +23,6 @@ namespace Dictionary
 		std::vector<std::wstring> find(std::wstring word, size_t max_distance) override;
 		TranslationState& getState() override;
 		void switchState() override;
+		void setView(IView* view)override;
 	};
 }

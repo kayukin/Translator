@@ -76,6 +76,7 @@
   <ItemGroup>
     <ClInclude Include="ILanguageDetector.h" />
     <ClInclude Include="ITranslatorController.h" />
+    <ClInclude Include="IView.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="Locator.h" />
     <ClInclude Include="RegexpLanguageDetector.h" />
