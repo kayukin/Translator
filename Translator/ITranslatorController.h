@@ -8,6 +8,7 @@ namespace Dictionary
 	class ITranslatorController
 	{
 	public:
+		virtual ~ITranslatorController(){}
 		virtual void onStateChange() = 0;
 		virtual std::vector<std::wstring> translate(std::wstring word) = 0;
 		virtual std::vector<std::wstring> find(std::wstring word, size_t max_distance) = 0;
