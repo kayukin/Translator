@@ -54,4 +54,10 @@ namespace Dictionary
 	{
 		m_view = view;
 	}
+
+	void TranslatorController::loadDict(std::wstring filename)
+	{
+		m_dict_filename = filename;
+		createTranslator();
+	}
 }

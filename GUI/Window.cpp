@@ -21,21 +21,27 @@ Window::~Window()
 ATOM Window::registerClass()
 {
 	WNDCLASSEX wcex;
+	if (!GetClassInfoEx(m_hInstance, m_window_class.c_str(), &wcex))
+	{
+		wcex.cbSize = sizeof(WNDCLASSEX);
+		wcex.style = CS_HREDRAW | CS_VREDRAW;
+		wcex.lpfnWndProc = Window::msgRouter;
+		wcex.cbClsExtra = 0;
+		wcex.cbWndExtra = 0;
+		wcex.hInstance = m_hInstance;
+		wcex.hIcon = LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_GUI));
+		wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
+		wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+		wcex.lpszMenuName = MAKEINTRESOURCE(IDC_GUI);
+		wcex.lpszClassName = m_window_class.c_str();
+		wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
-	wcex.cbSize = sizeof(WNDCLASSEX);
-	wcex.style = CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc = Window::msgRouter;
-	wcex.cbClsExtra = 0;
-	wcex.cbWndExtra = 0;
-	wcex.hInstance = m_hInstance;
-	wcex.hIcon = LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_GUI));
-	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	wcex.lpszMenuName = MAKEINTRESOURCE(IDC_GUI);
-	wcex.lpszClassName = m_window_class.c_str();
-	wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
-
-	return RegisterClassEx(&wcex);
+		return RegisterClassEx(&wcex);
+	}
+	else
+	{
+		return TRUE;
+	}
 }
 
 BOOL Window::init(int nCmdShow)
@@ -83,10 +89,6 @@ LRESULT CALLBACK Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	int wmId, wmEvent;
 	PAINTSTRUCT ps;
 	HDC hdc;
-	static std::shared_ptr<Dictionary::ITranslatorController> controller;
-
-
-
 	switch (message)
 	{
 	case WM_CREATE:
@@ -114,11 +116,11 @@ LRESULT CALLBACK Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 			onChangeButtonClick();
 			break;
 		}
-		case ID_FILE_SETTINGS:
-			DialogBox(m_hInstance, MAKEINTRESOURCE(IDD_PROP), m_hWnd, NULL);
+		case ID_FILE_OPEN:
+			onOpenFile();
 			break;
 		case IDM_ABOUT:
-			DialogBox(m_hInstance, MAKEINTRESOURCE(IDD_ABOUTBOX), m_hWnd, Window::About);
+			onAbout();
 			break;
 		case IDM_EXIT:
 			DestroyWindow(hWnd);
@@ -129,7 +131,7 @@ LRESULT CALLBACK Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
-		// TODO: Add any drawing code here...
+		onPaint(&hdc);
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_MOUSEWHEEL:
@@ -164,8 +166,7 @@ void Window::onCreate()
 
 void Window::onDestroy()
 {
-	//settings->save(controller->getDirection());
-	//delete controller;
+
 }
 
 void Window::onTranslateButtonClick()
@@ -225,7 +226,60 @@ void Window::onSwitchState()
 	SetWindowText(m_hEditResult, L"");
 }
 
+void Window::onOpenFile()
+{
+	OPENFILENAME ofn;       // common dialog box structure
+	TCHAR szFile[260];       // buffer for file name
+
+	// Initialize OPENFILENAME
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = m_hWnd;
+	ofn.lpstrFile = szFile;
+	// Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
+	// use the contents of szFile to initialize itself.
+	ofn.lpstrFile[0] = '\0';
+	ofn.nMaxFile = sizeof(szFile);
+	ofn.lpstrFilter = L"All\0*.*\0Text\0*.TXT\0";
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = NULL;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = NULL;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+	// Display the Open dialog box. 
+
+	if (GetOpenFileName(&ofn) == TRUE)
+	{
+		m_controller->loadDict(ofn.lpstrFile);
+	}
+}
+
+void Window::onAbout()
+{
+	DialogBox(m_hInstance, MAKEINTRESOURCE(IDD_ABOUTBOX), m_hWnd, Window::About);
+}
+
+void Window::onPaint(HDC* pHdc)
+{
+
+}
+
 INT_PTR CALLBACK Window::About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	return TRUE;
+	UNREFERENCED_PARAMETER(lParam);
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		return (INT_PTR)TRUE;
+
+	case WM_COMMAND:
+		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+		{
+			EndDialog(hDlg, LOWORD(wParam));
+			return (INT_PTR)TRUE;
+		}
+		break;
+	}
+	return (INT_PTR)FALSE;
 }

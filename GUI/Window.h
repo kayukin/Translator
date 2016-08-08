@@ -44,6 +44,9 @@ public:
 	virtual void onSearchButtonClick();
 	virtual void onChangeButtonClick();
 	virtual void onMouseWheel(WPARAM, LPARAM);
+	virtual void onOpenFile();
+	virtual void onAbout();
+	virtual void onPaint(HDC* pHdc);
 
 	void onSwitchState() override;
 };

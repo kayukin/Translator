@@ -15,5 +15,6 @@ namespace Dictionary
 		virtual void switchState() = 0;
 
 		virtual void setView(IView* view) = 0;
+		virtual void loadDict(std::wstring filename) = 0;
 	};
 }
