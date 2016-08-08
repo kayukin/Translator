@@ -23,6 +23,7 @@ namespace Dictionary
 		std::vector<std::wstring> find(std::wstring word, size_t max_distance) override;
 		TranslationState& getState() override;
 		void switchState() override;
-		void setView(IView* view)override;
+		void setView(IView* view) override;
+		void loadDict(std::wstring filename) override;
 	};
 }
