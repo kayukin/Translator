@@ -26,7 +26,7 @@ namespace Dictionary
 		return lang == m_first->getFrom() || lang == m_second->getFrom();
 	}
 
-	std::vector<std::wstring> Translator::translate(std::wstring word)
+	std::vector<std::wstring> Translator::translate(const std::wstring& word)
 	{
 		if (m_state->getFrom() == m_first->getFrom())
 		{
@@ -38,7 +38,7 @@ namespace Dictionary
 		}
 	}
 
-	std::vector<std::wstring> Translator::find(std::wstring word, size_t max_distance)
+	std::vector<std::wstring> Translator::find(const std::wstring& word, size_t max_distance)
 	{
 		if (m_state->getFrom() == m_first->getFrom())
 		{
@@ -47,6 +47,18 @@ namespace Dictionary
 		else
 		{
 			return m_second->find(word, max_distance);
+		}
+	}
+
+	std::vector<std::wstring> Translator::find_by_prefix(const std::wstring& prefix)
+	{
+		if (m_state->getFrom() == m_first->getFrom())
+		{
+			return m_first->find_by_prefix(prefix);
+		}
+		else
+		{
+			return m_second->find_by_prefix(prefix);
 		}
 	}
 

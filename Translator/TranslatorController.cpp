@@ -30,12 +30,12 @@ namespace Dictionary
 		m_view->onSwitchState();
 	}
 
-	std::vector<std::wstring> TranslatorController::translate(std::wstring word)
+	std::vector<std::wstring> TranslatorController::translate(const std::wstring& word)
 	{
 		return m_translator->translate(word);
 	}
 
-	std::vector<std::wstring> TranslatorController::find(std::wstring word, size_t max_distance)
+	std::vector<std::wstring> TranslatorController::find(const std::wstring& word, size_t max_distance)
 	{
 		return m_translator->find(word, max_distance);
 	}
@@ -55,9 +55,14 @@ namespace Dictionary
 		m_view = view;
 	}
 
-	void TranslatorController::loadDict(std::wstring filename)
+	void TranslatorController::loadDict(const std::wstring& filename)
 	{
 		m_dict_filename = filename;
 		createTranslator();
+	}
+
+	std::vector<std::wstring> TranslatorController::find_by_prefix(const std::wstring& prefix)
+	{
+		return m_translator->find_by_prefix(prefix);
 	}
 }

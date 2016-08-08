@@ -19,11 +19,12 @@ namespace Dictionary
 		~TranslatorController();
 		void onStateChange() override;
 
-		std::vector<std::wstring> translate(std::wstring word) override;
-		std::vector<std::wstring> find(std::wstring word, size_t max_distance) override;
+		std::vector<std::wstring> translate(const std::wstring& word) override;
+		std::vector<std::wstring> find(const std::wstring& word, size_t max_distance) override;
+		std::vector<std::wstring> find_by_prefix(const std::wstring& prefix) override;
 		TranslationState& getState() override;
 		void switchState() override;
 		void setView(IView* view) override;
-		void loadDict(std::wstring filename) override;
+		void loadDict(const std::wstring& filename) override;
 	};
 }

@@ -8,7 +8,7 @@ class Window :public Dictionary::IView
 {
 	//Controls id
 	static const int IDC_BUTTON_TRANSLATE = 30000;
-	static const int IDC_EDIT = 30001;
+	static const int IDC_COMBO = 30001;
 	static const int IDC_EDIT_RESULT = 30002;
 	static const int IDC_BUTTON_CHANGE = 30003;
 	static const int IDC_LIST_BOX = 30004;
@@ -16,7 +16,7 @@ class Window :public Dictionary::IView
 	//end
 
 	//Controls handles
-	HWND m_hEdit;
+	HWND m_hCombo;
 	HWND m_hEditResult;
 	HWND m_hButtonChange;
 	HWND m_hListBox;
@@ -47,6 +47,7 @@ public:
 	virtual void onOpenFile();
 	virtual void onAbout();
 	virtual void onPaint(HDC* pHdc);
+	virtual void onComboChange();
 
 	void onSwitchState() override;
 };

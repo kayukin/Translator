@@ -7,6 +7,8 @@
 #define NOMINMAX
 #include <windows.h>
 #include <commdlg.h>
+#include <CommCtrl.h>
+#include <windowsx.h>
 
 // C RunTime Header Files
 #include <stdlib.h>

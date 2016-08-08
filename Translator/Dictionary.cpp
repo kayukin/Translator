@@ -22,7 +22,7 @@ namespace Dictionary
 		return prevCol[len2];
 	}
 
-	vector<wstring> Dictionary::translate(wstring word)
+	vector<wstring> Dictionary::translate(const std::wstring& word)
 	{
 		return m_translation[word];
 	}
@@ -40,7 +40,7 @@ namespace Dictionary
 		return words;
 	}
 
-	vector<wstring> Dictionary::find(wstring word, size_t min_dist)
+	vector<wstring> Dictionary::find(const std::wstring& word, size_t min_dist)
 	{
 		vector<wstring> res;
 		size_t proc_count = thread::hardware_concurrency();
@@ -71,7 +71,23 @@ namespace Dictionary
 		return res;
 	}
 
-	void Dictionary::addWord(std::wstring word, std::wstring translation)
+	vector<wstring> Dictionary::find_by_prefix(const std::wstring& prefix)
+	{
+		vector<wstring> res;
+		if (prefix.length() > 1)
+		{
+			for (auto& w : m_index)
+			{
+				if (w.find(prefix) == 0)
+				{
+					res.push_back(w);
+				}
+			}
+		}
+		return res;
+	}
+
+	void Dictionary::addWord(const std::wstring& word, const std::wstring& translation)
 	{
 		if (m_translation.find(word) == m_translation.end())
 		{
