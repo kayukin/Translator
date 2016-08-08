@@ -20,9 +20,10 @@ namespace Dictionary
 		Language m_language_to;
 	public:
 		Dictionary(Language from, Language to) : m_language_from(from), m_language_to(to) {}
-		std::vector<std::wstring> translate(std::wstring word) override;
-		std::vector<std::wstring> find(std::wstring word, size_t max_distance) override;
-		void addWord(std::wstring word, std::wstring translation) override;
+		std::vector<std::wstring> translate(const std::wstring& word) override;
+		std::vector<std::wstring> find(const std::wstring& word, size_t max_distance) override;
+		std::vector<std::wstring> find_by_prefix(const std::wstring& prefix) override;
+		void addWord(const std::wstring& word, const std::wstring& translation) override;
 
 		Language getFrom() override { return m_language_from; }
 		Language getTo() override { return m_language_to; }

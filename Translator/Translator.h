@@ -26,8 +26,9 @@ namespace Dictionary
 		Translator(std::shared_ptr<IDictionary> first, std::shared_ptr<IDictionary> second, TranslationState state);
 		TranslationState& getState() override;
 
-		std::vector<std::wstring> translate(std::wstring word) override;
-		std::vector<std::wstring> find(std::wstring word, size_t max_distance) override;
+		std::vector<std::wstring> translate(const std::wstring& word) override;
+		std::vector<std::wstring> find(const std::wstring& word, size_t max_distance) override;
+		std::vector<std::wstring> find_by_prefix(const std::wstring& prefix) override;
 		void switchState() override;
 
 		void setController(ITranslatorController* controller) override;

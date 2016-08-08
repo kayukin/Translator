@@ -101,21 +101,20 @@ LRESULT CALLBACK Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		wmEvent = HIWORD(wParam);
 		switch (wmId)
 		{
+		case IDC_COMBO:
+			if (wmEvent == CBN_EDITCHANGE)
+			{
+				onComboChange();
+			}
 		case IDC_BUTTON_TRANSLATE:
-		{
 			onTranslateButtonClick();
 			break;
-		}
 		case IDC_BUTTON_SEARCH:
-		{
 			onSearchButtonClick();
 			break;
-		}
 		case IDC_BUTTON_CHANGE:
-		{
 			onChangeButtonClick();
 			break;
-		}
 		case ID_FILE_OPEN:
 			onOpenFile();
 			break;
@@ -153,13 +152,15 @@ void Window::onCreate()
 
 	auto state = m_controller->getState();
 	std::wstring cur_lang = state.getFrom().getName() + L"->" + state.getTo().getName();
+	
+	m_hListBox = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTBOX, L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL, 10, 40, 300, 150, m_hWnd, reinterpret_cast<HMENU>(IDC_LIST_BOX), m_hInstance, NULL);
 
-	m_hListBox = CreateWindowEx(WS_EX_CLIENTEDGE, L"LISTBOX", L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL, 10, 40, 300, 150, m_hWnd, reinterpret_cast<HMENU>(IDC_LIST_BOX), m_hInstance, NULL);
-	m_hEdit = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 10, 10, 300, 20, m_hWnd, reinterpret_cast<HMENU>(IDC_EDIT), m_hInstance, NULL);
-	m_hEditResult = CreateWindowEx(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 10, 250, 300, 20, m_hWnd, reinterpret_cast<HMENU>(IDC_EDIT_RESULT), m_hInstance, NULL);
-	m_hButtonChange = CreateWindowEx(NULL, L"BUTTON", cur_lang.c_str(), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 10, 300, 140, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_CHANGE), m_hInstance, NULL);
-	CreateWindowEx(NULL, L"BUTTON", L"Translate", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 160, 300, 100, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_TRANSLATE), m_hInstance, NULL);
-	CreateWindowEx(NULL, L"BUTTON", L"Search", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 90, 200, 150, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_SEARCH), m_hInstance, NULL);
+	m_hCombo = CreateWindow(WC_COMBOBOX, TEXT(""), CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE, 10, 10, 300, 500, m_hWnd, reinterpret_cast<HMENU>(IDC_COMBO), m_hInstance, NULL);
+
+	m_hEditResult = CreateWindowEx(WS_EX_CLIENTEDGE, WC_EDIT, L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 10, 250, 300, 20, m_hWnd, reinterpret_cast<HMENU>(IDC_EDIT_RESULT), m_hInstance, NULL);
+	m_hButtonChange = CreateWindowEx(NULL, WC_BUTTON, cur_lang.c_str(), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 10, 300, 140, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_CHANGE), m_hInstance, NULL);
+	CreateWindowEx(NULL, WC_BUTTON, L"Translate", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 160, 300, 100, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_TRANSLATE), m_hInstance, NULL);
+	CreateWindowEx(NULL, WC_BUTTON, L"Search", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 90, 200, 150, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_SEARCH), m_hInstance, NULL);
 	SendMessage(m_hEditResult, EM_SETREADONLY, TRUE, NULL);
 	DestroyWindow(splash);
 }
@@ -193,9 +194,9 @@ void Window::onTranslateButtonClick()
 
 void Window::onSearchButtonClick()
 {
-	int edit_length = GetWindowTextLength(m_hEdit);
+	int edit_length = GetWindowTextLength(m_hCombo);
 	LPTSTR buf = new TCHAR[edit_length + 1];
-	GetWindowText(m_hEdit, buf, edit_length + 1);
+	GetWindowText(m_hCombo, buf, edit_length + 1);
 	std::wstring edit_text(buf);
 	delete[] buf;
 
@@ -263,6 +264,25 @@ void Window::onAbout()
 void Window::onPaint(HDC* pHdc)
 {
 
+}
+
+void Window::onComboChange()
+{
+	int edit_length = GetWindowTextLength(m_hCombo);
+	LPTSTR buf = new TCHAR[edit_length + 1];
+	GetWindowText(m_hCombo, buf, edit_length + 1);
+	std::wstring edit_text(buf);
+	delete[] buf;
+	auto words_with_prefix = m_controller->find_by_prefix(edit_text);
+	while (ComboBox_GetCount(m_hCombo) > 0)
+	{
+		ComboBox_DeleteString(m_hCombo, 0);
+	}
+	for (auto& word : words_with_prefix)
+	{
+		SendMessage(m_hCombo, CB_ADDSTRING, 0, (LPARAM)word.c_str());
+	}
+	ComboBox_ShowDropdown(m_hCombo, TRUE);
 }
 
 INT_PTR CALLBACK Window::About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
