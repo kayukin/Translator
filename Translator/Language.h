@@ -7,10 +7,8 @@ namespace Dictionary
 	{
 		std::wstring m_name;
 	protected:
-		Language(std::wstring name) :m_name(name){}
-		Language(){
-			m_name = L"Unknown";
-		}
+		explicit Language(const std::wstring& name) :m_name(name){}
+		Language():m_name(L"Unknown"){}
 	public:
 		bool operator==(const Language& other)const{ return m_name == other.m_name; }
 		bool operator!=(const Language& other)const{ return !(*this == other); }

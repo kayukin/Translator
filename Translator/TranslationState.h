@@ -11,7 +11,7 @@ namespace Dictionary
 		Language m_to;
 	public:
 		TranslationState() :m_from(Languages::UNKNOWN), m_to(Languages::UNKNOWN){}
-		TranslationState(Language from, Language to) :m_from(from), m_to(to){}
+		TranslationState(Language& from, Language& to) :m_from(from), m_to(to){}
 		Language getFrom(){ return m_from; }
 		Language getTo(){ return m_to; }
 		void setFrom(Language from){ m_from = from; }

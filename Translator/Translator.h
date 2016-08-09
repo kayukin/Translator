@@ -23,7 +23,7 @@ namespace Dictionary
 
 		bool isSupported(const Language& lang)const;
 	public:
-		Translator(std::shared_ptr<IDictionary> first, std::shared_ptr<IDictionary> second, TranslationState state);
+		Translator(std::shared_ptr<IDictionary>& first, std::shared_ptr<IDictionary>& second, TranslationState state);
 		TranslationState& getState() override;
 
 		std::vector<std::wstring> translate(const std::wstring& word) override;
