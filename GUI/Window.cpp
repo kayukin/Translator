@@ -280,7 +280,7 @@ void Window::onComboChange()
 	}
 	for (auto& word : words_with_prefix)
 	{
-		SendMessage(m_hCombo, CB_ADDSTRING, 0, (LPARAM)word.c_str());
+		ComboBox_AddString(m_hCombo, word.c_str());
 	}
 	ComboBox_ShowDropdown(m_hCombo, TRUE);
 }
