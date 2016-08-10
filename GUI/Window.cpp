@@ -155,8 +155,8 @@ void Window::onCreate()
 	
 	m_hListBox = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTBOX, L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL, 10, 40, 300, 150, m_hWnd, reinterpret_cast<HMENU>(IDC_LIST_BOX), m_hInstance, NULL);
 
-	m_hCombo = CreateWindow(WC_COMBOBOX, TEXT(""), CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE, 10, 10, 300, 500, m_hWnd, reinterpret_cast<HMENU>(IDC_COMBO), m_hInstance, NULL);
-
+	//m_hCombo = CreateWindow(WC_COMBOBOX, TEXT(""), CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE, 10, 10, 300, 500, m_hWnd, reinterpret_cast<HMENU>(IDC_COMBO), m_hInstance, NULL);
+	m_hCombo.Create(10, 10, 300, 500, IDC_COMBO, m_hWnd);
 	m_hEditResult = CreateWindowEx(WS_EX_CLIENTEDGE, WC_EDIT, L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 10, 250, 300, 20, m_hWnd, reinterpret_cast<HMENU>(IDC_EDIT_RESULT), m_hInstance, NULL);
 	m_hButtonChange = CreateWindowEx(NULL, WC_BUTTON, cur_lang.c_str(), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 10, 300, 140, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_CHANGE), m_hInstance, NULL);
 	CreateWindowEx(NULL, WC_BUTTON, L"Translate", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 160, 300, 100, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_TRANSLATE), m_hInstance, NULL);
@@ -194,13 +194,9 @@ void Window::onTranslateButtonClick()
 
 void Window::onSearchButtonClick()
 {
-	int edit_length = GetWindowTextLength(m_hCombo);
-	LPTSTR buf = new TCHAR[edit_length + 1];
-	GetWindowText(m_hCombo, buf, edit_length + 1);
-	std::wstring edit_text(buf);
-	delete[] buf;
+	auto entered_word = m_hCombo.getText();
 
-	auto words = m_controller->find(edit_text, 2);
+	auto words = m_controller->find(entered_word, 2);
 	SendMessage(m_hListBox, LB_RESETCONTENT, NULL, NULL);
 	for (auto word : words)
 	{
@@ -268,21 +264,14 @@ void Window::onPaint(HDC* pHdc)
 
 void Window::onComboChange()
 {
-	int edit_length = GetWindowTextLength(m_hCombo);
-	LPTSTR buf = new TCHAR[edit_length + 1];
-	GetWindowText(m_hCombo, buf, edit_length + 1);
-	std::wstring edit_text(buf);
-	delete[] buf;
-	auto words_with_prefix = m_controller->find_by_prefix(edit_text);
-	while (ComboBox_GetCount(m_hCombo) > 0)
-	{
-		ComboBox_DeleteString(m_hCombo, 0);
-	}
+	auto entered_word = m_hCombo.getText();
+	auto words_with_prefix = m_controller->find_by_prefix(entered_word);
+	m_hCombo.clear();
 	for (auto& word : words_with_prefix)
 	{
-		ComboBox_AddString(m_hCombo, word.c_str());
+		m_hCombo.add(word);
 	}
-	ComboBox_ShowDropdown(m_hCombo, TRUE);
+	m_hCombo.showDropdown(true);
 }
 
 INT_PTR CALLBACK Window::About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
