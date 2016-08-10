@@ -84,6 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="IDictionaryTests.cpp" />
     <ClCompile Include="ILanguageDetectorTests.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>

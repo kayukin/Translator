@@ -21,5 +21,8 @@
     <ClCompile Include="ILanguageDetectorTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IDictionaryTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
