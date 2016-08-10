@@ -3,7 +3,6 @@
 #include "Dictionary.h"
 #include "ITranslator.h"
 #include "ILanguageDetector.h"
-#include "Locator.h"
 
 #include <functional>
 
@@ -16,14 +15,15 @@ namespace Dictionary
 		std::shared_ptr<IDictionary> m_first;
 		std::shared_ptr<IDictionary> m_second;
 
-		std::shared_ptr<ILanguageDetector> m_lang_detector = Locator::Instance().getLanguageDetector();
+		std::shared_ptr<ILanguageDetector> m_lang_detector;
 		std::shared_ptr<TranslationState> m_state;
 
-		ITranslatorController* m_controller;
+		std::weak_ptr<ITranslatorController> m_controller;
 
 		bool isSupported(const Language& lang)const;
 	public:
-		Translator(std::shared_ptr<IDictionary>& first, std::shared_ptr<IDictionary>& second, TranslationState state);
+		Translator(std::shared_ptr<IDictionary>& first, std::shared_ptr<IDictionary>& second, TranslationState state, 
+			std::shared_ptr<ILanguageDetector> lang_detector);
 		TranslationState& getState() override;
 
 		std::vector<std::wstring> translate(const std::wstring& word) override;
@@ -31,6 +31,6 @@ namespace Dictionary
 		std::vector<std::wstring> find_by_prefix(const std::wstring& prefix) override;
 		void switchState() override;
 
-		void setController(ITranslatorController* controller) override;
+		void setController(std::shared_ptr<ITranslatorController> controller) override;
 	};
 }

@@ -16,6 +16,6 @@ namespace Dictionary
 		virtual TranslationState& getState() = 0;
 		virtual void switchState() = 0;
 
-		virtual void setController(ITranslatorController* controller) = 0;
+		virtual void setController(std::shared_ptr<ITranslatorController> controller) = 0;
 	};
 }

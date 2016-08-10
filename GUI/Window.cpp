@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Window.h"
 
-Window::Window(HINSTANCE hInst, Dictionary::ITranslatorController* controller) :m_hInstance(hInst), m_controller(controller)
+Window::Window(HINSTANCE hInst, std::shared_ptr<Dictionary::ITranslatorController> controller) :m_hInstance(hInst), m_controller(controller)
 {
 	const int MAX_LOADSTRING = 100;
 	TCHAR buf[MAX_LOADSTRING];
@@ -148,21 +148,23 @@ LRESULT CALLBACK Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 
 void Window::onCreate()
 {
-	HWND splash = CreateDialog(m_hInstance, MAKEINTRESOURCE(IDD_SPLASH), m_hWnd, NULL);
+	if (auto controller = m_controller.lock())
+	{
+		HWND splash = CreateDialog(m_hInstance, MAKEINTRESOURCE(IDD_SPLASH), m_hWnd, NULL);
+		Dictionary::TranslationState state = controller->getState();
+		std::wstring cur_lang = state.getFrom().getName() + L"->" + state.getTo().getName();
 
-	auto state = m_controller->getState();
-	std::wstring cur_lang = state.getFrom().getName() + L"->" + state.getTo().getName();
-	
-	m_hListBox = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTBOX, L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL, 10, 40, 300, 150, m_hWnd, reinterpret_cast<HMENU>(IDC_LIST_BOX), m_hInstance, NULL);
+		m_hListBox = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTBOX, L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL, 10, 40, 300, 150, m_hWnd, reinterpret_cast<HMENU>(IDC_LIST_BOX), m_hInstance, NULL);
 
-	//m_hCombo = CreateWindow(WC_COMBOBOX, TEXT(""), CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE, 10, 10, 300, 500, m_hWnd, reinterpret_cast<HMENU>(IDC_COMBO), m_hInstance, NULL);
-	m_hCombo.Create(10, 10, 300, 500, IDC_COMBO, m_hWnd);
-	m_hEditResult = CreateWindowEx(WS_EX_CLIENTEDGE, WC_EDIT, L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 10, 250, 300, 20, m_hWnd, reinterpret_cast<HMENU>(IDC_EDIT_RESULT), m_hInstance, NULL);
-	m_hButtonChange = CreateWindowEx(NULL, WC_BUTTON, cur_lang.c_str(), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 10, 300, 140, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_CHANGE), m_hInstance, NULL);
-	CreateWindowEx(NULL, WC_BUTTON, L"Translate", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 160, 300, 100, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_TRANSLATE), m_hInstance, NULL);
-	CreateWindowEx(NULL, WC_BUTTON, L"Search", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 90, 200, 150, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_SEARCH), m_hInstance, NULL);
-	SendMessage(m_hEditResult, EM_SETREADONLY, TRUE, NULL);
-	DestroyWindow(splash);
+		//m_hCombo = CreateWindow(WC_COMBOBOX, TEXT(""), CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE, 10, 10, 300, 500, m_hWnd, reinterpret_cast<HMENU>(IDC_COMBO), m_hInstance, NULL);
+		m_hCombo.Create(10, 10, 300, 500, IDC_COMBO, m_hWnd);
+		m_hEditResult = CreateWindowEx(WS_EX_CLIENTEDGE, WC_EDIT, L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 10, 250, 300, 20, m_hWnd, reinterpret_cast<HMENU>(IDC_EDIT_RESULT), m_hInstance, NULL);
+		m_hButtonChange = CreateWindowEx(NULL, WC_BUTTON, cur_lang.c_str(), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 10, 300, 140, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_CHANGE), m_hInstance, NULL);
+		CreateWindowEx(NULL, WC_BUTTON, L"Translate", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 160, 300, 100, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_TRANSLATE), m_hInstance, NULL);
+		CreateWindowEx(NULL, WC_BUTTON, L"Search", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 90, 200, 150, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_SEARCH), m_hInstance, NULL);
+		SendMessage(m_hEditResult, EM_SETREADONLY, TRUE, NULL);
+		DestroyWindow(splash);
+	}
 }
 
 void Window::onDestroy()
@@ -172,41 +174,50 @@ void Window::onDestroy()
 
 void Window::onTranslateButtonClick()
 {
-	int selected_index = (int)SendMessage(m_hListBox, LB_GETCURSEL, NULL, NULL);
-	if (selected_index != LB_ERR)
+	if (auto controller = m_controller.lock())
 	{
-		int text_len = (int)SendMessage(m_hListBox, LB_GETTEXTLEN, static_cast<WPARAM>(selected_index), NULL);
-		TCHAR* buf = new TCHAR[text_len + 1];
-		SendMessage(m_hListBox, LB_GETTEXT, static_cast<WPARAM>(selected_index), reinterpret_cast<LPARAM>(buf));
-		std::wstring selected_word(buf);
-		delete[] buf;
-		auto translations = m_controller->translate(selected_word);
-		std::wstring str;
-		for (auto translation : translations)
+		int selected_index = (int)SendMessage(m_hListBox, LB_GETCURSEL, NULL, NULL);
+		if (selected_index != LB_ERR)
 		{
-			str += translation + L", ";
+			int text_len = (int)SendMessage(m_hListBox, LB_GETTEXTLEN, static_cast<WPARAM>(selected_index), NULL);
+			TCHAR* buf = new TCHAR[text_len + 1];
+			SendMessage(m_hListBox, LB_GETTEXT, static_cast<WPARAM>(selected_index), reinterpret_cast<LPARAM>(buf));
+			std::wstring selected_word(buf);
+			delete[] buf;
+			auto translations = controller->translate(selected_word);
+			std::wstring str;
+			for (auto translation : translations)
+			{
+				str += translation + L", ";
+			}
+			str.pop_back();
+			str.pop_back();
+			SetWindowText(m_hEditResult, str.c_str());
 		}
-		str.pop_back();
-		str.pop_back();
-		SetWindowText(m_hEditResult, str.c_str());
 	}
 }
 
 void Window::onSearchButtonClick()
 {
-	auto entered_word = m_hCombo.getText();
-
-	auto words = m_controller->find(entered_word, 2);
-	SendMessage(m_hListBox, LB_RESETCONTENT, NULL, NULL);
-	for (auto word : words)
+	if (auto controller = m_controller.lock())
 	{
-		SendMessage(m_hListBox, LB_ADDSTRING, NULL, reinterpret_cast<LPARAM>(word.c_str()));
+		auto entered_word = m_hCombo.getText();
+
+		auto words = controller->find(entered_word, 2);
+		SendMessage(m_hListBox, LB_RESETCONTENT, NULL, NULL);
+		for (auto word : words)
+		{
+			SendMessage(m_hListBox, LB_ADDSTRING, NULL, reinterpret_cast<LPARAM>(word.c_str()));
+		}
 	}
 }
 
 void Window::onChangeButtonClick()
 {
-	m_controller->switchState();
+	if (auto controller = m_controller.lock())
+	{
+		controller->switchState();
+	}
 }
 
 void Window::onMouseWheel(WPARAM wParam, LPARAM lParam)
@@ -216,39 +227,45 @@ void Window::onMouseWheel(WPARAM wParam, LPARAM lParam)
 
 void Window::onSwitchState()
 {
-	auto state = m_controller->getState();
-	std::wstring cur_lang = state.getFrom().getName() + L"->" + state.getTo().getName();
-	SendMessage(m_hButtonChange, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(cur_lang.c_str()));
-	SendMessage(m_hListBox, LB_RESETCONTENT, NULL, NULL);
-	SetWindowText(m_hEditResult, L"");
+	if (auto controller = m_controller.lock())
+	{
+		auto state = controller->getState();
+		std::wstring cur_lang = state.getFrom().getName() + L"->" + state.getTo().getName();
+		SendMessage(m_hButtonChange, WM_SETTEXT, 0, reinterpret_cast<LPARAM>(cur_lang.c_str()));
+		SendMessage(m_hListBox, LB_RESETCONTENT, NULL, NULL);
+		SetWindowText(m_hEditResult, L"");
+	}
 }
 
 void Window::onOpenFile()
 {
-	OPENFILENAME ofn;       // common dialog box structure
-	TCHAR szFile[260];       // buffer for file name
-
-	// Initialize OPENFILENAME
-	ZeroMemory(&ofn, sizeof(ofn));
-	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = m_hWnd;
-	ofn.lpstrFile = szFile;
-	// Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
-	// use the contents of szFile to initialize itself.
-	ofn.lpstrFile[0] = '\0';
-	ofn.nMaxFile = sizeof(szFile);
-	ofn.lpstrFilter = L"All\0*.*\0Text\0*.TXT\0";
-	ofn.nFilterIndex = 1;
-	ofn.lpstrFileTitle = NULL;
-	ofn.nMaxFileTitle = 0;
-	ofn.lpstrInitialDir = NULL;
-	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-
-	// Display the Open dialog box. 
-
-	if (GetOpenFileName(&ofn) == TRUE)
+	if (auto controller = m_controller.lock())
 	{
-		m_controller->loadDict(ofn.lpstrFile);
+		OPENFILENAME ofn;       // common dialog box structure
+		TCHAR szFile[260];       // buffer for file name
+
+		// Initialize OPENFILENAME
+		ZeroMemory(&ofn, sizeof(ofn));
+		ofn.lStructSize = sizeof(ofn);
+		ofn.hwndOwner = m_hWnd;
+		ofn.lpstrFile = szFile;
+		// Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
+		// use the contents of szFile to initialize itself.
+		ofn.lpstrFile[0] = '\0';
+		ofn.nMaxFile = sizeof(szFile);
+		ofn.lpstrFilter = L"All\0*.*\0Text\0*.TXT\0";
+		ofn.nFilterIndex = 1;
+		ofn.lpstrFileTitle = NULL;
+		ofn.nMaxFileTitle = 0;
+		ofn.lpstrInitialDir = NULL;
+		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+		// Display the Open dialog box. 
+
+		if (GetOpenFileName(&ofn) == TRUE)
+		{
+			controller->loadDict(ofn.lpstrFile);
+		}
 	}
 }
 
@@ -264,14 +281,17 @@ void Window::onPaint(HDC* pHdc)
 
 void Window::onComboChange()
 {
-	auto entered_word = m_hCombo.getText();
-	auto words_with_prefix = m_controller->find_by_prefix(entered_word);
-	m_hCombo.clear();
-	for (auto& word : words_with_prefix)
+	if (auto controller = m_controller.lock())
 	{
-		m_hCombo.add(word);
+		auto entered_word = m_hCombo.getText();
+		auto words_with_prefix = controller->find_by_prefix(entered_word);
+		m_hCombo.clear();
+		for (auto& word : words_with_prefix)
+		{
+			m_hCombo.add(word);
+		}
+		m_hCombo.showDropdown(true);
 	}
-	m_hCombo.showDropdown(true);
 }
 
 INT_PTR CALLBACK Window::About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)

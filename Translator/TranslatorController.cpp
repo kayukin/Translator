@@ -3,54 +3,74 @@
 
 namespace Dictionary
 {
-TranslatorController::TranslatorController():m_view(nullptr)
+	TranslatorController::TranslatorController(std::shared_ptr<ISettingsLoader> settings_loader) :m_settings_loader(settings_loader)
 {
     Settings settings = m_settings_loader->load();
     m_dict_filename = settings.dict_filename;
-    createTranslator();
 }
 
 TranslatorController::~TranslatorController()
 {
     Settings settings;
     settings.dict_filename = m_dict_filename;
-    settings.state = m_translator->getState();
+    settings.state = getState();
     m_settings_loader->save(settings);
 }
 
 void TranslatorController::createTranslator()
 {
     Settings settings = m_settings_loader->load();
-    m_translator = TranslatorFactory().create(m_dict_filename, settings.state);
-    m_translator->setController(this);
+	m_translator = TranslatorFactory().create(m_dict_filename, settings.state);
+	if (m_translator)
+	{
+		m_translator->setController(shared_from_this());
+	}
 }
 
 void TranslatorController::onStateChange()
 {
-    m_view->onSwitchState();
+	if (auto view = m_view.lock())
+	{
+		view->onSwitchState();
+	}
 }
 
 std::vector<std::wstring> TranslatorController::translate(const std::wstring& word)
 {
-    return m_translator->translate(word);
+	if (m_translator)
+	{
+		return m_translator->translate(word);
+	}
+	return std::vector<std::wstring>();
 }
 
 std::vector<std::wstring> TranslatorController::find(const std::wstring& word, size_t max_distance)
 {
-    return m_translator->find(word, max_distance);
+	if (m_translator)
+	{
+		return m_translator->find(word, max_distance);
+	}
+	return std::vector<std::wstring>();
 }
 
-TranslationState& TranslatorController::getState()
+TranslationState TranslatorController::getState()
 {
-    return m_translator->getState();
+	if (m_translator)
+	{
+		return m_translator->getState();
+	}
+	return TranslationState();
 }
 
 void TranslatorController::switchState()
 {
-    m_translator->switchState();
+	if (m_translator)
+	{
+		m_translator->switchState();
+	}
 }
 
-void TranslatorController::setView(IView* view)
+void TranslatorController::setView(std::shared_ptr<IView> view)
 {
     m_view = view;
 }
@@ -63,7 +83,11 @@ void TranslatorController::loadDict(const std::wstring& filename)
 
 std::vector<std::wstring> TranslatorController::find_by_prefix(const std::wstring& prefix)
 {
-    return m_translator->find_by_prefix(prefix);
+	if (m_translator)
+	{
+		return m_translator->find_by_prefix(prefix);
+	}
+	return std::vector<std::wstring>();
 }
 
 }

@@ -19,7 +19,7 @@ namespace Dictionary
 		Language m_language_from;
 		Language m_language_to;
 	public:
-		Dictionary(Language& from, Language& to) : m_language_from(from), m_language_to(to) {}
+		Dictionary(const Language& from, const Language& to) : m_language_from(from), m_language_to(to) {}
 		std::vector<std::wstring> translate(const std::wstring& word) override;
 		std::vector<std::wstring> find(const std::wstring& word, size_t max_distance) override;
 		std::vector<std::wstring> find_by_prefix(const std::wstring& prefix) override;

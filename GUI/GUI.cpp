@@ -3,7 +3,7 @@
 #include <fstream>
 #include "../Translator/TranslatorAPI.h"
 #include "Window.h"
-
+#include "../Translator/Locator.h"
 
 
 
@@ -15,11 +15,13 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstanc
 	MSG msg;
 	HACCEL hAccelTable;
 
-	Dictionary::ITranslatorController* controller = new Dictionary::TranslatorController();
+	auto controller = Dictionary::Locator::Instance().createTranslatorController();
+	controller->createTranslator();
 	
-	Window window(hInstance, controller);
-	controller->setView(&window);
-	window.init(nCmdShow);
+	std::shared_ptr<Window> window(new Window(hInstance, controller));
+
+	controller->setView(std::shared_ptr<Dictionary::IView>(window));
+	window->init(nCmdShow);
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_GUI));
 	
@@ -31,6 +33,5 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstanc
 			DispatchMessage(&msg);
 		}
 	}
-	delete controller;
 	return (int)msg.wParam;
 }
