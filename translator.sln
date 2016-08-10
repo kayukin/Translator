@@ -11,6 +11,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Translator", "Translator\Translator.vcxproj", "{2A9EDC9D-09BB-4956-91C9-7A8317B15821}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Test\Test.vcxproj", "{339D8D24-5E46-43AF-BA6C-62404B3ACCB2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2A9EDC9D-09BB-4956-91C9-7A8317B15821} = {2A9EDC9D-09BB-4956-91C9-7A8317B15821}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtest-md", "..\googletest\googletest\msvc\gtest-md.vcxproj", "{C8F6C172-56F2-4E76-B5FA-C3B423B31BE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +35,10 @@ Global
 		{339D8D24-5E46-43AF-BA6C-62404B3ACCB2}.Debug|Win32.Build.0 = Debug|Win32
 		{339D8D24-5E46-43AF-BA6C-62404B3ACCB2}.Release|Win32.ActiveCfg = Release|Win32
 		{339D8D24-5E46-43AF-BA6C-62404B3ACCB2}.Release|Win32.Build.0 = Release|Win32
+		{C8F6C172-56F2-4E76-B5FA-C3B423B31BE8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C8F6C172-56F2-4E76-B5FA-C3B423B31BE8}.Debug|Win32.Build.0 = Debug|Win32
+		{C8F6C172-56F2-4E76-B5FA-C3B423B31BE8}.Release|Win32.ActiveCfg = Release|Win32
+		{C8F6C172-56F2-4E76-B5FA-C3B423B31BE8}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
