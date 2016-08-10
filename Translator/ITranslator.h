@@ -15,5 +15,7 @@ namespace Dictionary
 		virtual std::vector<std::wstring> find_by_prefix(const std::wstring& prefix) = 0;
 		virtual TranslationState& getState() = 0;
 		virtual void switchState() = 0;
+
+		virtual void setController(std::shared_ptr<ITranslatorController> controller) = 0;
 	};
 }

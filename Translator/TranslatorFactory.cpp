@@ -54,6 +54,6 @@ namespace Dictionary
 			}
 		}
 		
-		return Locator::Instance().getTranslator(first, second, state);
+		return Locator::Instance().createTranslator(first, second, state);
 	}
 }

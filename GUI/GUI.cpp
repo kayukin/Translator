@@ -15,7 +15,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstanc
 	MSG msg;
 	HACCEL hAccelTable;
 
-	auto controller = Dictionary::Locator::Instance().getTranslatorController();
+	auto controller = Dictionary::Locator::Instance().createTranslatorController();
+	controller->createTranslator();
 	
 	std::shared_ptr<Window> window(new Window(hInstance, controller));
 

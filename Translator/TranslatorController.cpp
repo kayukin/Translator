@@ -7,7 +7,6 @@ namespace Dictionary
 {
     Settings settings = m_settings_loader->load();
     m_dict_filename = settings.dict_filename;
-    createTranslator();
 }
 
 TranslatorController::~TranslatorController()
@@ -21,7 +20,11 @@ TranslatorController::~TranslatorController()
 void TranslatorController::createTranslator()
 {
     Settings settings = m_settings_loader->load();
-    m_translator = TranslatorFactory().create(m_dict_filename, settings.state);
+	m_translator = TranslatorFactory().create(m_dict_filename, settings.state);
+	if (m_translator)
+	{
+		m_translator->setController(shared_from_this());
+	}
 }
 
 void TranslatorController::onStateChange()
