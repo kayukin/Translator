@@ -3,6 +3,7 @@
 #include "resource.h"
 #include <memory>
 #include "../Translator/TranslatorAPI.h"
+#include "Combobox.h"
 
 class Window :public Dictionary::IView
 {
@@ -16,7 +17,7 @@ class Window :public Dictionary::IView
 	//end
 
 	//Controls handles
-	HWND m_hCombo;
+	Combobox m_hCombo;
 	HWND m_hEditResult;
 	HWND m_hButtonChange;
 	HWND m_hListBox;
