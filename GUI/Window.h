@@ -30,9 +30,9 @@ class Window :public Dictionary::IView
 	ATOM registerClass();
 	LRESULT CALLBACK wndProc(HWND, UINT, WPARAM, LPARAM);
 
-	Dictionary::ITranslatorController* m_controller;
+	std::weak_ptr<Dictionary::ITranslatorController> m_controller;
 public:
-	Window(HINSTANCE hInst, Dictionary::ITranslatorController* controller);
+	Window(HINSTANCE hInst, std::shared_ptr<Dictionary::ITranslatorController> controller);
 	~Window();
 	BOOL init(int nCmdShow);
 	

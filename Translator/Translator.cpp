@@ -4,8 +4,9 @@
 namespace Dictionary
 {
 
-Translator::Translator(std::shared_ptr<IDictionary>& first, std::shared_ptr<IDictionary>& second, TranslationState state)
-        :m_first(first), m_second(second), m_controller(nullptr) {
+	Translator::Translator(std::shared_ptr<IDictionary>& first, std::shared_ptr<IDictionary>& second, TranslationState state,
+		std::shared_ptr<ILanguageDetector> lang_detector, std::shared_ptr<ITranslatorController> controller)
+		:m_first(first), m_second(second), m_controller(controller), m_lang_detector(lang_detector){
     if (isSupported(state.getFrom()) && isSupported(state.getTo()))
     {
         m_state = std::shared_ptr<TranslationState>(new TranslationState(state));
@@ -73,10 +74,4 @@ void Translator::switchState()
         m_controller->onStateChange();
     }
 }
-
-void Translator::setController(ITranslatorController* controller)
-{
-    m_controller = controller;
-}
-
 }

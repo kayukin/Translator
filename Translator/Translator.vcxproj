@@ -95,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Language.cpp" />
+    <ClCompile Include="RegistrySettings.cpp" />
     <ClCompile Include="TranslatorController.cpp" />
     <ClCompile Include="TranslatorFactory.cpp" />
     <ClCompile Include="Dictionary.cpp" />

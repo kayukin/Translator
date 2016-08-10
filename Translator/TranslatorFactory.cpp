@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "TranslatorFactory.h"
+#include "Locator.h"
 
 namespace Dictionary
 {
@@ -52,7 +53,7 @@ namespace Dictionary
 				second->addWord(words[1], words[0]);
 			}
 		}
-		std::shared_ptr<ITranslator> trans(new Translator(first, second, state));
-		return trans;
+		
+		return Locator::Instance().getTranslator(first, second, state);
 	}
 }
