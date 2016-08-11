@@ -13,6 +13,7 @@ public:
 	void add(std::wstring str);
 	std::wstring getText();
 	void showDropdown(bool show);
+	void reset();
 	static LRESULT CALLBACK wndProc(HWND, UINT, LPARAM, WPARAM);
 };
 

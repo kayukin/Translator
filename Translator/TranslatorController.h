@@ -24,5 +24,6 @@ namespace Dictionary
 		void switchState() override;
 		void setView(std::shared_ptr<IView> view) override;
 		void loadDict(const std::wstring& filename) override;
+		void setAutoDetect(bool val) override;
 	};
 }
