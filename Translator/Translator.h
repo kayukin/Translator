@@ -19,6 +19,7 @@ namespace Dictionary
 		std::shared_ptr<TranslationState> m_state;
 
 		std::weak_ptr<ITranslatorController> m_controller;
+		bool m_auto_detect;
 
 		bool isSupported(const Language& lang)const;
 	public:
@@ -32,5 +33,7 @@ namespace Dictionary
 		void switchState() override;
 
 		void setController(std::shared_ptr<ITranslatorController> controller) override;
+
+		void setAutoDetect(bool val) override;
 	};
 }

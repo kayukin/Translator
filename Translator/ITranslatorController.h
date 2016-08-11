@@ -18,5 +18,6 @@ namespace Dictionary
 		virtual void createTranslator() = 0;
 		virtual void setView(std::shared_ptr<IView> view) = 0;
 		virtual void loadDict(const std::wstring& filename) = 0;
+		virtual void setAutoDetect(bool val) = 0;
 	};
 }

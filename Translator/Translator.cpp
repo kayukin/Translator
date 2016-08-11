@@ -42,6 +42,14 @@ namespace Dictionary
 
 	std::vector<std::wstring> Translator::find(const std::wstring& word, size_t max_distance)
 	{
+		if (m_auto_detect)
+		{
+			auto lang = m_lang_detector->detectLanguage(word);
+			if (lang != getState().getFrom())
+			{
+				switchState();
+			}
+		}
 		if (m_state->getFrom() == m_first->getFrom())
 		{
 			return m_first->find(word, max_distance);
@@ -78,5 +86,10 @@ namespace Dictionary
 	void Translator::setController(std::shared_ptr<ITranslatorController> controller)
 	{
 		m_controller = controller;
+	}
+
+	void Translator::setAutoDetect(bool val)
+	{
+		m_auto_detect = val;
 	}
 }
