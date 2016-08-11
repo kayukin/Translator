@@ -48,7 +48,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <Linkage-gtest>static</Linkage-gtest>
-    <IncludePath>C:\work\Develop\C++\googletest\googletest\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\work\Develop\C++\googletest\googlemock\include;C:\work\Develop\C++\googletest\googletest\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -89,6 +89,9 @@
     <ClCompile Include="test.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\googletest\googlemock\msvc\2010\gmock.vcxproj">
+      <Project>{34681f0d-ce45-415d-b5f2-5c662dfe3bd5}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\googletest\googletest\msvc\gtest-md.vcxproj">
       <Project>{c8f6c172-56f2-4e76-b5fa-c3b423b31be8}</Project>
     </ProjectReference>
