@@ -56,3 +56,8 @@ void Combobox::showDropdown(bool show)
 {
 	ComboBox_ShowDropdown(m_handle, TRUE);
 }
+
+void Combobox::reset()
+{
+	ComboBox_ResetContent(m_handle);
+}

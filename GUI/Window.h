@@ -14,6 +14,7 @@ class Window :public Dictionary::IView
 	static const int IDC_BUTTON_CHANGE = 30003;
 	static const int IDC_LIST_BOX = 30004;
 	static const int IDC_BUTTON_SEARCH = 30005;
+	static const int IDC_CHECK_BOX = 30006;
 	//end
 
 	//Controls handles
@@ -21,6 +22,7 @@ class Window :public Dictionary::IView
 	HWND m_hEditResult;
 	HWND m_hButtonChange;
 	HWND m_hListBox;
+	HWND m_hCheckBox;
 	//end
 
 	HINSTANCE m_hInstance;
@@ -31,6 +33,7 @@ class Window :public Dictionary::IView
 	LRESULT CALLBACK wndProc(HWND, UINT, WPARAM, LPARAM);
 
 	std::weak_ptr<Dictionary::ITranslatorController> m_controller;
+	bool isAutodetectChecked();
 public:
 	Window(HINSTANCE hInst, std::shared_ptr<Dictionary::ITranslatorController> controller);
 	~Window();
@@ -49,6 +52,7 @@ public:
 	virtual void onAbout();
 	virtual void onPaint(HDC* pHdc);
 	virtual void onComboChange();
+	virtual void onCheckBox();
 
 	void onSwitchState() override;
 };

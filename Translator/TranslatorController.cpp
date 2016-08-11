@@ -4,90 +4,95 @@
 namespace Dictionary
 {
 	TranslatorController::TranslatorController(std::shared_ptr<ISettingsLoader> settings_loader) :m_settings_loader(settings_loader)
-{
-    Settings settings = m_settings_loader->load();
-    m_dict_filename = settings.dict_filename;
-}
-
-TranslatorController::~TranslatorController()
-{
-    Settings settings;
-    settings.dict_filename = m_dict_filename;
-    settings.state = getState();
-    m_settings_loader->save(settings);
-}
-
-void TranslatorController::createTranslator()
-{
-    Settings settings = m_settings_loader->load();
-	m_translator = TranslatorFactory().create(m_dict_filename, settings.state);
-	if (m_translator)
 	{
-		m_translator->setController(shared_from_this());
+		Settings settings = m_settings_loader->load();
+		m_dict_filename = settings.dict_filename;
 	}
-}
 
-void TranslatorController::onStateChange()
-{
-	if (auto view = m_view.lock())
+	TranslatorController::~TranslatorController()
 	{
-		view->onSwitchState();
+		Settings settings;
+		settings.dict_filename = m_dict_filename;
+		settings.state = getState();
+		m_settings_loader->save(settings);
 	}
-}
 
-std::vector<std::wstring> TranslatorController::translate(const std::wstring& word)
-{
-	if (m_translator)
+	void TranslatorController::createTranslator()
 	{
-		return m_translator->translate(word);
+		Settings settings = m_settings_loader->load();
+		m_translator = TranslatorFactory().create(m_dict_filename, settings.state);
+		if (m_translator)
+		{
+			m_translator->setController(shared_from_this());
+		}
 	}
-	return std::vector<std::wstring>();
-}
 
-std::vector<std::wstring> TranslatorController::find(const std::wstring& word, size_t max_distance)
-{
-	if (m_translator)
+	void TranslatorController::onStateChange()
 	{
-		return m_translator->find(word, max_distance);
+		if (auto view = m_view.lock())
+		{
+			view->onSwitchState();
+		}
 	}
-	return std::vector<std::wstring>();
-}
 
-TranslationState TranslatorController::getState()
-{
-	if (m_translator)
+	std::vector<std::wstring> TranslatorController::translate(const std::wstring& word)
 	{
-		return m_translator->getState();
+		if (m_translator)
+		{
+			return m_translator->translate(word);
+		}
+		return std::vector<std::wstring>();
 	}
-	return TranslationState();
-}
 
-void TranslatorController::switchState()
-{
-	if (m_translator)
+	std::vector<std::wstring> TranslatorController::find(const std::wstring& word, size_t max_distance)
 	{
-		m_translator->switchState();
+		if (m_translator)
+		{
+			return m_translator->find(word, max_distance);
+		}
+		return std::vector<std::wstring>();
 	}
-}
 
-void TranslatorController::setView(std::shared_ptr<IView> view)
-{
-    m_view = view;
-}
-
-void TranslatorController::loadDict(const std::wstring& filename)
-{
-    m_dict_filename = filename;
-    createTranslator();
-}
-
-std::vector<std::wstring> TranslatorController::find_by_prefix(const std::wstring& prefix)
-{
-	if (m_translator)
+	TranslationState TranslatorController::getState()
 	{
-		return m_translator->find_by_prefix(prefix);
+		if (m_translator)
+		{
+			return m_translator->getState();
+		}
+		return TranslationState();
 	}
-	return std::vector<std::wstring>();
-}
+
+	void TranslatorController::switchState()
+	{
+		if (m_translator)
+		{
+			m_translator->switchState();
+		}
+	}
+
+	void TranslatorController::setView(std::shared_ptr<IView> view)
+	{
+		m_view = view;
+	}
+
+	void TranslatorController::loadDict(const std::wstring& filename)
+	{
+		m_dict_filename = filename;
+		createTranslator();
+	}
+
+	std::vector<std::wstring> TranslatorController::find_by_prefix(const std::wstring& prefix)
+	{
+		if (m_translator)
+		{
+			return m_translator->find_by_prefix(prefix);
+		}
+		return std::vector<std::wstring>();
+	}
+
+	void TranslatorController::setAutoDetect(bool val)
+	{
+		m_translator->setAutoDetect(val);
+	}
 
 }
