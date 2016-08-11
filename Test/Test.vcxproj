@@ -86,6 +86,7 @@
   <ItemGroup>
     <ClCompile Include="IDictionaryTests.cpp" />
     <ClCompile Include="ILanguageDetectorTests.cpp" />
+    <ClCompile Include="ITranslatorTests.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +99,12 @@
     <ProjectReference Include="..\Translator\Translator.vcxproj">
       <Project>{2a9edc9d-09bb-4956-91c9-7a8317b15821}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MockIDictionary.h" />
+    <ClInclude Include="MockILanguageDetector.h" />
+    <ClInclude Include="MockITranslator.h" />
+    <ClInclude Include="MockITranslatorController.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
