@@ -51,7 +51,7 @@ BOOL Window::init(int nCmdShow)
 	int x = GetSystemMetrics(SM_CXSCREEN) / 2 - width;
 	int y = GetSystemMetrics(SM_CYSCREEN) / 2 - height / 2;
 	m_hWnd = CreateWindow(m_window_class.c_str(), m_title.c_str(), WS_OVERLAPPEDWINDOW, x, y, width, height, NULL, NULL, m_hInstance, this);
-
+	SetWindowText(m_hWnd, m_title.c_str());
 	if (!m_hWnd)
 	{
 		return FALSE;
