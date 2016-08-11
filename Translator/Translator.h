@@ -4,9 +4,6 @@
 #include "ITranslator.h"
 #include "ILanguageDetector.h"
 
-#include <functional>
-
-
 namespace Dictionary
 {
 
