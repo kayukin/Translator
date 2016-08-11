@@ -28,12 +28,21 @@ namespace Dictionary
 		}
 	};
 
-	TEST_F(ITranslatorTests, Translate)
+	TEST_F(ITranslatorTests, Find)
 	{
 		std::wstring word = L"hello";
 		std::vector<std::wstring> will_return = { L"mello", L"hallo" };
 		EXPECT_CALL(*firstDict, find(word, 2)).WillOnce(Return(will_return));
 		auto words = translator->find(word, 2);
 		EXPECT_EQ(words, will_return);
+	}
+
+	TEST_F(ITranslatorTests, FindWithPrefix)
+	{
+		std::wstring pref = L"he";
+		std::vector<std::wstring> will_return = { L"hello", L"here" };
+		EXPECT_CALL(*firstDict, find_by_prefix(pref)).WillOnce(Return(will_return));
+		auto res = translator->find_by_prefix(pref);
+		EXPECT_EQ(res, will_return);
 	}
 }
