@@ -161,7 +161,7 @@ void Window::onCreate()
 		m_hListBox = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTBOX, L"", WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_AUTOVSCROLL, 10, 40, 300, 150, m_hWnd, reinterpret_cast<HMENU>(IDC_LIST_BOX), m_hInstance, NULL);
 
 		//m_hCombo = CreateWindow(WC_COMBOBOX, TEXT(""), CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE, 10, 10, 300, 500, m_hWnd, reinterpret_cast<HMENU>(IDC_COMBO), m_hInstance, NULL);
-		m_hCombo.Create(10, 10, 300, 500, IDC_COMBO, m_hWnd);
+		m_hCombo.Create(10, 10, 300, 290, IDC_COMBO, m_hWnd);
 		m_hCheckBox = CreateWindowEx(NULL, WC_BUTTON, L"Auto detect", BS_AUTOCHECKBOX | WS_VISIBLE | WS_CHILD, 10, 270, 100, 25, m_hWnd, reinterpret_cast<HMENU>(IDC_CHECK_BOX), m_hInstance, NULL);
 		m_hEditResult = CreateWindowEx(WS_EX_CLIENTEDGE, WC_EDIT, L"", WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, 10, 250, 300, 20, m_hWnd, reinterpret_cast<HMENU>(IDC_EDIT_RESULT), m_hInstance, NULL);
 		m_hButtonChange = CreateWindowEx(NULL, WC_BUTTON, cur_lang.c_str(), WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 10, 300, 140, 24, m_hWnd, reinterpret_cast<HMENU>(IDC_BUTTON_CHANGE), m_hInstance, NULL);
@@ -256,7 +256,7 @@ void Window::onOpenFile()
 		ofn.lpstrFile = szFile;
 		ofn.lpstrFile[0] = '\0';
 		ofn.nMaxFile = sizeof(szFile);
-		ofn.lpstrFilter = L"All\0*.*\0Text\0*.TXT\0";
+		ofn.lpstrFilter = L"Dictionary\0*.dict\0";
 		ofn.nFilterIndex = 1;
 		ofn.lpstrFileTitle = NULL;
 		ofn.nMaxFileTitle = 0;
