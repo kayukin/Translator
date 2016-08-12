@@ -60,7 +60,7 @@ section "install"
 	# Files added here should be removed by the uninstaller (see section "uninstall")
 	file "Release\GUI.exe"
 	file "Release\Translator.lib"
-	file "dictionary.dat"
+	file "rus-eng.dict"
 	# Add any other files for the install directory (license files, app data, etc) here
  
 	# Uninstaller - See function un.onInit and section "uninstall" for configuration
@@ -90,7 +90,7 @@ section "install"
 	# Set the INSTALLSIZE constant (!defined at the top of this script) so Add/Remove Programs can accurately report the size
 	WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${COMPANYNAME} ${APPNAME}" "EstimatedSize" ${INSTALLSIZE}
 
-	WriteRegStr HKCU "Software\${COMPANYNAME}\${APPNAME}" "Filename" "$INSTDIR\dictionary.dat"
+	WriteRegStr HKCU "Software\${COMPANYNAME}\${APPNAME}" "Filename" "$INSTDIR\rus-eng.dict"
 sectionEnd
  
 # Uninstaller
@@ -116,7 +116,7 @@ section "uninstall"
 	# Remove files
 	delete $INSTDIR\GUI.exe
 	delete $INSTDIR\Translator.lib
-	delete $INSTDIR\dictionary.dat
+	delete $INSTDIR\rus-eng.dict
  
 	# Always delete uninstaller as the last action
 	delete $INSTDIR\uninstall.exe
