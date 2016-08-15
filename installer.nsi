@@ -30,7 +30,7 @@ InstallDir "$PROGRAMFILES\${COMPANYNAME}\${APPNAME}"
 LicenseData "license.txt"
 # This will be in the installer/uninstaller's title bar
 Name "${COMPANYNAME} - ${APPNAME}"
-outFile "sample-installer.exe"
+outFile "dictionary-installer.exe"
  
 !include LogicLib.nsh
  
