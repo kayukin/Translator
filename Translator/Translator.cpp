@@ -6,7 +6,7 @@ namespace Dictionary
 
 	Translator::Translator(const std::shared_ptr<IDictionary>& first, const std::shared_ptr<IDictionary>& second, TranslationState state,
 		std::shared_ptr<ILanguageDetector> lang_detector)
-		:m_first(first), m_second(second), m_lang_detector(lang_detector){
+		:m_first(first), m_second(second), m_lang_detector(lang_detector), m_auto_detect(false){
 		if (isSupported(state.getFrom()) && isSupported(state.getTo()))
 		{
 			m_state = std::shared_ptr<TranslationState>(new TranslationState(state));

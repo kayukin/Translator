@@ -13,7 +13,7 @@ namespace Dictionary
 		std::wstring m_dict_filename;
 		std::weak_ptr<IView> m_view;
 	public:
-		TranslatorController(std::shared_ptr<ISettingsLoader> settings_loader);
+		explicit TranslatorController(std::shared_ptr<ISettingsLoader> settings_loader);
 		~TranslatorController();
 		void onStateChange() override;
 		void createTranslator() override;
