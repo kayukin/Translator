@@ -92,7 +92,10 @@ namespace Dictionary
 
 	void TranslatorController::setAutoDetect(bool val)
 	{
-		m_translator->setAutoDetect(val);
+		if (m_translator)
+		{
+			m_translator->setAutoDetect(val);
+		}
 	}
 
 }
